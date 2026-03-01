@@ -37,7 +37,7 @@ def hyperbolic_cross_indices(d, k):
         temp = np.zeros((k, d), dtype=int)
         temp[:, q] = np.arange(1, k + 1)
         a = np.vstack([a, temp])
-    
+
     pmax = int(np.floor(np.log(k + 1) / np.log(2)))
     
     for p in range(2, pmax + 1):
@@ -62,9 +62,8 @@ def hyperbolic_cross_indices(d, k):
         for c in range(combs.shape[0]):
             i1 = arow
             i2 = arow + possible_indices.shape[0]
+
             a[i1:i2, combs[c, :]] = possible_indices
             arow = i2
     
     return a
-
-print(hyperbolic_cross_indices(3,5))
