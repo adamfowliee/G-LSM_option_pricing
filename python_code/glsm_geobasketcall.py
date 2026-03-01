@@ -95,10 +95,10 @@ def main():
     p['S0'] = 100 * np.ones(p['dim'])
     p['volatility'] = np.diag(np.ones(p['dim'])) * 0.2
     p['correlation'] = 0.5 * np.eye(p['dim']) + 0.5 * np.ones((p['dim'], p['dim']))
-    p['numTimeStep'] = 10
+    p['numTimeStep'] = 100
     p['callput'] = 'put'
     
-    M = 100
+    M = 1000
     order = 10
     I = hyperbolic_cross_indices(p['dim'], order)
     Nbasis = I.shape[0]

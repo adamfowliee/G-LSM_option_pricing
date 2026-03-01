@@ -1,5 +1,7 @@
 import numpy as np
-from generate_poly_basis_1d import generate_poly_basis_1d
+from .generate_poly_basis_1d import generate_poly_basis_1d
+
+
 
 def generate_poly_hermite(type_str, I, grid, scale):
     """
