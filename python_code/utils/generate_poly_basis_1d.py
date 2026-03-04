@@ -28,8 +28,11 @@ def generate_poly_basis_1d(type_str, order, grid, scale):
         # Chebyshev polynomials of the first kind T_n(x)
         # T_n(x) = cos( n acos(x) )
         domain = scale
+
         xmin = domain[0]
         xmax = domain[1]
+
+        grid = np.clip(grid, xmin, xmax)
         
         # Shift grid to [-1, 1]
         grid = (grid - xmin) * 2 / (xmax - xmin) - 1

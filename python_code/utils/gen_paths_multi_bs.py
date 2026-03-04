@@ -33,11 +33,13 @@ def gen_paths_multi_bs(p, M):
     S0 = p['S0']
     vol = p['volatility']
     P = p['correlation']
+    cov = p['covariance']
     N = p['numTimeStep']
     dt = T / N
     
-    # Compute transformation
-    cov = vol @ P @ vol.T
+    if cov == None:
+        cov = vol @ P @ vol.T
+        
     eigenvalues, Q = np.linalg.eig(cov)
     
     # Sort eigenvalues in descending order
@@ -56,9 +58,12 @@ def gen_paths_multi_bs(p, M):
     # Standard deviations (reshaped to row vector for broadcasting)
     SIG = np.sqrt(np.diag(Lambda)).reshape(1, -1)
     
-    # Generate paths
-    W = np.zeros((M, d, N))
+    # Generate N+1 steps (Index 0 is t=0, Index N is t=T)
+    W = np.zeros((M, d, N)) 
     S = np.zeros((M, d, N))
+    
+    # Set initial stock prices at t=0
+    S[:, :, 0] = S0
     
     for k in range(N):
         if k == 0:

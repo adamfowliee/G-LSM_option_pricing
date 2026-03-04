@@ -26,17 +26,29 @@ from utils.hyperbolic_cross_indices import hyperbolic_cross_indices
 class HestonParams:
     """Container for Heston model parameters."""
     def __init__(self):
-        self.S0 = 12
-        self.strike = 10
-        self.v0 = 0.0625
-        self.rate = 0.1
-        self.dividend = 0
-        self.rho = 0.1
-        self.kappa = 5
-        self.theta = 0.16
-        self.nu = 0.9
-        self.expiration = 0.25
-        self.numTimeStep = 50
+        # self.S0 = 12
+        # self.strike = 10
+        # self.v0 = 0.0625
+        # self.rate = 0.1
+        # self.dividend = 0
+        # self.rho = 0.1
+        # self.kappa = 5
+        # self.theta = 0.16
+        # self.nu = 0.9
+        # self.expiration = 0.25
+        # self.numTimeStep = 50
+
+        self.S0 = 6881.62       # Spot Price (March 2, 2026)
+        self.strike = 6900      # Strike Price (ATM)
+        self.v0 = 0.0225        # Initial Variance (VIX ~15%)
+        self.rate = 0.036       # Risk-free Rate (3.6%)
+        self.dividend = 0.012   # Dividend Yield (1.2%)
+        self.rho = -0.7         # Correlation (Leverage effect)
+        self.kappa = 3.0        # Mean Reversion
+        self.theta = 0.04       # Long-run Variance
+        self.nu = 0.4           # Vol of Vol
+        self.expiration = 0.25  # Time to maturity (3 months)
+        self.numTimeStep = 50   # Simulation steps
 
 
 def main():
@@ -103,13 +115,8 @@ def run_heston(p, M, I):
     payoff = np.exp(-r * T) * np.maximum(K - S0 * np.exp(Xpaths[:, 0, N-1]), 0)
 
 
-    '''
-    I am getting this error
-    RuntimeWarning: invalid value encountered in arccos  A[:, i] = np.cos(i * np.arccos(grid))
-    copilot suggests this fix:
-    domain_logv = np.array([Xpaths[:, 1, :].min() - 0.5, Xpaths[:, 1, :].max() + 0.5])
-    '''
     domain_logv = np.array([-7, np.log(0.8)])
+    # domain_logv = np.array([Xpaths[:, 1, :].min() - 0.5, Xpaths[:, 1, :].max() + 0.5])
     poly_type = ['norm_hermite', 'chebyshev']
     
     # Backward induction through time steps

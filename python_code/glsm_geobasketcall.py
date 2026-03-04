@@ -44,8 +44,8 @@ def run_geobaskput(p, M, order):
     # Dynamic programming
     payoff = valueMatrix[:, N - 1].copy()
     
-    for k in range(N - 1, 0, -1):
-        scale = k * dt
+    for k in range(N - 2, -1, -1):
+        scale = (k + 1) * dt
         
         # Generate basis and gradient-enhanced basis
         # This is algortihm 4.2
@@ -53,7 +53,7 @@ def run_geobaskput(p, M, order):
         A = A1.copy()
         
         for j in range(d):
-            dW = Wpaths[:, j, k] - Wpaths[:, j, k - 1]
+            dW = Wpaths[:, j, k + 1] - Wpaths[:, j, k]
             for n in range(Nbasis):
                 if I[n, j] >= 1:
                     A[:, n] = A[:, n] + dW * A1[:, loc_grad[n, j]] * np.sqrt(I[n, j] / scale)
@@ -61,10 +61,16 @@ def run_geobaskput(p, M, order):
         # Solve least squares problem using conjugate gradient
         ATA = A.T @ A / M
         ATb = A.T @ payoff / M
-        beta, info = cgs(ATA, ATb)
-        
-        if info != 0:
-            print(f'CG solver did not converge at step {k}')
+
+        # beta, info  = cgs(ATA, ATb)
+        # if info != 0:
+        #     print(f'CG solver did not converge at step {k}')
+
+        # doing this solve gets closer to MATLAB solution...
+        beta= np.linalg.solve(ATA, ATb)
+
+        # more accurate I think
+        # beta, *_ = np.linalg.lstsq(A, payoff, rcond=None)
         
         # Compute continuation value
         CV = A1 @ beta
@@ -72,7 +78,7 @@ def run_geobaskput(p, M, order):
         
         # Exercise decision: exercise if immediate payoff > continuation value
         idx = (CV < EV) & (EV > 0)
-        tau[idx] = k
+        tau[idx] = k + 1
         payoff[idx] = EV[idx]
         payoff[~idx] = CV[~idx]
     
@@ -81,24 +87,27 @@ def run_geobaskput(p, M, order):
     
     return V0
 
-def main():
+def main(p=None):
     """
     Main script: price Bermudan geometric basket put option using G-LSM.
     """
+    # if no parameters are passed in then create here
+    if not p:
     # Set parameters
-    p = {}
-    p['strike'] = 100
-    p['rate'] = 0.03
-    p['dividend'] = 0
-    p['expiration'] = 0.25
-    p['dim'] = 2
-    p['S0'] = 100 * np.ones(p['dim'])
-    p['volatility'] = np.diag(np.ones(p['dim'])) * 0.2
-    p['correlation'] = 0.5 * np.eye(p['dim']) + 0.5 * np.ones((p['dim'], p['dim']))
-    p['numTimeStep'] = 100
-    p['callput'] = 'put'
+        p = {}
+        p['strike'] = 100
+        p['rate'] = 0.03
+        p['dividend'] = 0
+        p['expiration'] = 0.25
+        p['dim'] = 2
+        p['S0'] = 100 * np.ones(p['dim'])
+        p['volatility'] = np.diag(np.ones(p['dim'])) * 0.2
+        p['correlation'] = 0.5 * np.eye(p['dim']) + 0.5 * np.ones((p['dim'], p['dim']))
+        p['covariance'] = None
+        p['numTimeStep'] = 50
+        p['callput'] = 'call'
     
-    M = 1000
+    M = 10000
     order = 10
     I = hyperbolic_cross_indices(p['dim'], order)
     Nbasis = I.shape[0]
