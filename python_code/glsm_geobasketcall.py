@@ -93,6 +93,7 @@ def main(p=None):
     """
     # if no parameters are passed in then create here
     if not p:
+        print('No parameters passed, creating new ones in glsm_geobasketcall.py')
     # Set parameters
         p = {}
         p['strike'] = 100
@@ -125,9 +126,14 @@ def main(p=None):
         V0_vals[t] = run_geobaskput(p, M, order)
         print(f'run trial no.{t + 1}, price = {V0_vals[t]:.4f}')
         print('---------------------------------------------')
+
+    V0_mean = np.mean(V0_vals)
+    std = np.std(V0_vals)
     
-    print(f'\nMean price: {np.mean(V0_vals):.4f}')
-    print(f'Std dev:    {np.std(V0_vals):.4f}')
+    print(f'\nMean price: {V0_mean:.4f}')
+    print(f'Std dev:    {std:.4f}')
+
+    return V0_mean, std
     
     # Optionally save results
     # np.savez(f'data/{file_name}.npz', V0_vals=V0_vals)

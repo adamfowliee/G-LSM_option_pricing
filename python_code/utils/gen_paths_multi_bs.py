@@ -37,9 +37,9 @@ def gen_paths_multi_bs(p, M):
     N = p['numTimeStep']
     dt = T / N
     
-    if cov == None:
+    if vol:
         cov = vol @ P @ vol.T
-        
+
     eigenvalues, Q = np.linalg.eig(cov)
     
     # Sort eigenvalues in descending order
