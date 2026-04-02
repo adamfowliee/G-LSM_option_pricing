@@ -31,13 +31,17 @@ def gen_paths_multi_bs(p, M):
     T = p['expiration']
     d = p['dim']
     S0 = p['S0']
-    vol = p['volatility']
-    P = p['correlation']
-    cov = p['covariance']
+
     N = p['numTimeStep']
     dt = T / N
+
+    # I changed things slightly to accept either vol and corr, to compute covariance
+    # or just get pass in a covariance matrix 
+    vol = p.get('volatility')
+    P = p.get('correlation')
+    cov = p.get('covariance')
     
-    if vol:
+    if vol is not None:
         cov = vol @ P @ vol.T
 
     eigenvalues, Q = np.linalg.eig(cov)

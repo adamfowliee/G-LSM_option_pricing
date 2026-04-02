@@ -48,7 +48,7 @@ class HestonParams:
         self.theta = 0.04       # Long-run Variance
         self.nu = 0.4           # Vol of Vol
         self.expiration = 0.25  # Time to maturity (3 months)
-        self.numTimeStep = 50   # Simulation steps
+        self.numTimeStep = 1   # Simulation steps
 
 
 def main():

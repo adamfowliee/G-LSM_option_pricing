@@ -115,7 +115,7 @@ def main(p=None):
     
     # Running parameters
     num_trials = 10
-    file_name = f"geobaskput_GLSM_d{p['dim']}_M{M}_order{order}_Nb{Nbasis}_trials{num_trials}"
+    # file_name = f"geobaskput_GLSM_d{p['dim']}_M{M}_order{order}_Nb{Nbasis}_trials{num_trials}"
     V0_vals = np.zeros(num_trials)
     
     # Run trials
